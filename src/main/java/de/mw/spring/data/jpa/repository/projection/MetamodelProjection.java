@@ -13,7 +13,7 @@ import lombok.experimental.Delegate;
  * @param <T> type of entity
  * @param <R> type of tuple result mapping
  */
-public class MetamodelProjectionUtil<T,R> implements Projection<T>, ProjectionMapper<R> {
+public class MetamodelProjection<T,R> implements Projection<T>, ProjectionMapper<R> {
 
     @Delegate
     private Projection<T> projection;
@@ -21,7 +21,7 @@ public class MetamodelProjectionUtil<T,R> implements Projection<T>, ProjectionMa
     private ProjectionMapper<R> projectionMapper;
     
     @SafeVarargs
-    public MetamodelProjectionUtil(Class<R> clazz, Attribute<T,?>... attributes) {
+    public MetamodelProjection(Class<R> clazz, Attribute<T,?>... attributes) {
         this.projection = new ProjectionByMetamodelAttributes<>(attributes);
         this.projectionMapper = new ProjectionMapperByMetamodelConstructor<>(clazz, attributes);
     }

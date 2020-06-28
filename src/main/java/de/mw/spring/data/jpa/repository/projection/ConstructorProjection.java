@@ -24,7 +24,7 @@ import lombok.experimental.Delegate;
  * @param <T> type of entity
  * @param <R> type of tuple result mapping
  */
-public class ConstructorProjectionUtil<T, R> implements Projection<T>, ProjectionMapper<R> {
+public class ConstructorProjection<T, R> implements Projection<T>, ProjectionMapper<R> {
 
     @Delegate
     private Projection<T> projection;
@@ -34,7 +34,7 @@ public class ConstructorProjectionUtil<T, R> implements Projection<T>, Projectio
     /**
      * @param clazz class to project to
      */
-    public ConstructorProjectionUtil(Class<R> clazz) {
+    public ConstructorProjection(Class<R> clazz) {
         this(clazz, null);
     }
     
@@ -42,7 +42,7 @@ public class ConstructorProjectionUtil<T, R> implements Projection<T>, Projectio
      * @param clazz clazz class to project to
      * @param projectionConstructor qualifier for value of {@link ProjectionConstructor}
      */
-    public ConstructorProjectionUtil(Class<R> clazz, @Nullable String projectionConstructor) {
+    public ConstructorProjection(Class<R> clazz, @Nullable String projectionConstructor) {
         Constructor<R> preferredConstructor = findConstructor(clazz, projectionConstructor);
         this.projection = new ProjectionByConstructor<>(preferredConstructor);
         this.projectionMapper = new ProjectionMapperByConstructor<>(preferredConstructor);
