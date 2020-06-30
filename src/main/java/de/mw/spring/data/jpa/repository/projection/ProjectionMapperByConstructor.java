@@ -12,7 +12,7 @@ import lombok.SneakyThrows;
  * 
  * If the constructor does not match the tuple structure it will fail at runtime.
  */
-public class ProjectionMapperByConstructor<R> implements ProjectionMapper<R> {
+public class ProjectionMapperByConstructor<R> implements ProjectionMapper<Tuple,R> {
 
     protected Constructor<R> constructor;
     

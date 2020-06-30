@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * Helper class for creating QueryHints suitable for streaming JPA queries
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class StreamingQueryHints {
+public class QueryHints {
 
     /**
      * Creates a set of query hints for hibernate suitable for streaming JPA queries
@@ -18,7 +18,7 @@ public class StreamingQueryHints {
      * 
      * @param fetchSize query fetch size
      */
-    public static Map<String, Object> getQueryHints(int fetchSize) {
+    public static Map<String, Object> streamingQueryHints(int fetchSize) {
         Map<String, Object> queryHints = new HashMap<>();
         queryHints.put(org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE, String.valueOf(fetchSize));
         queryHints.put(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, "false");

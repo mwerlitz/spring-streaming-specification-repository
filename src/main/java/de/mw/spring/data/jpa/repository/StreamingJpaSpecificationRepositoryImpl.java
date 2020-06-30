@@ -2,6 +2,7 @@ package de.mw.spring.data.jpa.repository;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
@@ -15,10 +16,19 @@ import java.util.stream.Stream;
 public class StreamingJpaSpecificationRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> 
                                                             implements StreamingJpaSpecificationRepository<T, ID> {
     
+    /**
+     * Constructor for usage as a replacement of SimpleJpaRepository in {@link EnableJpaRepositories#repositoryBaseClass()}
+     */
     public StreamingJpaSpecificationRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
         super(entityInformation, entityManager);
     }
 
+    /**
+     * Constructor for usage as standalone impl. bean impl.
+     * 
+     * @param domainClass JPA entity class
+     * @param entityManager the entityManger of the JPA entity
+     */
     public StreamingJpaSpecificationRepositoryImpl(Class<T> domainClass, EntityManager entityManager) {
         super(domainClass, entityManager);
     }

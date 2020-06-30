@@ -18,7 +18,7 @@ import de.mw.spring.data.jpa.repository.Projection;
  * There is no check for the availability of the attributes.
  * So the produced query may fail at runtime.
  */
-public class ProjectionByAttributeNames<T> implements Projection<T> {
+public class ProjectionByAttributeNames<T> implements Projection<T,Tuple> {
 
     protected String[] attributes;
     

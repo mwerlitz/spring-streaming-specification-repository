@@ -9,6 +9,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 import org.springframework.lang.Nullable;
 
+import javax.persistence.Tuple;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +37,7 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @return never {@literal null}.
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if more than one entity found.
      */
-    <R> Optional<R> findOne(@Nullable Specification<T> spec, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> Optional<R> findOne(@Nullable Specification<T> spec, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
 
     /**
      * Projecting and mapping version of {@link JpaSpecificationExecutor#findOne(Specification)} with sort option.
@@ -49,7 +51,24 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @return never {@literal null}.
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if more than one entity found.
      */
-    <R> Optional<R> findOne(@Nullable Specification<T> spec, Sort sort, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> Optional<R> findOne(@Nullable Specification<T> spec, Sort sort, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
+
+    /**
+     * Generic projecting and mapping version of {@link JpaSpecificationExecutor#findOne(Specification)} with sort option.
+     * Returns a single mapped result matching the given {@link Specification} or {@link Optional#empty()} if none found.
+     *
+     * @param <R> type of mapped result
+     * @param <P> target type of projection, e.g. {@link Tuple}, {@link Object[]}, ...
+     * @param spec can be {@literal null}.
+     * @param sort the sorting to apply, must not be {@literal null}.
+     * @param projectionClass class of target projection type
+     * @param projection the projection to apply, must not be {@literal null}.
+     * @param mapper the tuple mapper to apply, must not be {@literal null}.
+     * @return never {@literal null}.
+     * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if more than one entity found.
+     */
+    <R, P> Optional<R> findOne(Specification<T> spec, Sort sort, Class<P> projectionClass, Projection<T, P> projection, ProjectionMapper<P, R> mapper);
+
 
     /**
      * Projecting and mapping version of {@link JpaSpecificationExecutor#findAll(Specification)}.
@@ -61,7 +80,7 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @param mapper the tuple mapper to apply, must not be {@literal null}.
      * @return never {@literal null}.
      */
-    <R> List<R> findAll(@Nullable Specification<T> spec, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> List<R> findAll(@Nullable Specification<T> spec, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
 
     /**
      * Projecting and mapping version of {@link JpaSpecificationExecutor#findAll(Specification, Sort)}.
@@ -74,7 +93,23 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @param mapper the tuple mapper to apply, must not be {@literal null}.
      * @return never {@literal null}.
      */
-    <R> List<R> findAll(@Nullable Specification<T> spec, Sort sort, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> List<R> findAll(@Nullable Specification<T> spec, Sort sort, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
+
+    /**
+     * Generic projecting and mapping version of {@link JpaSpecificationExecutor#findAll(Specification, Sort)}.
+     * Returns all mapped results matching the given {@link Specification} and {@link Sort}.
+     *
+     * @param <R> type of mapped result
+     * @param <P> target type of projection, e.g. {@link Tuple}, {@link Object[]}, ...
+     * @param spec can be {@literal null}.
+     * @param sort must not be {@literal null}.
+     * @param projectionClass class of target projection type
+     * @param projection the projection to apply, must not be {@literal null}.
+     * @param mapper the tuple mapper to apply, must not be {@literal null}.
+     * @return never {@literal null}.
+     */
+    <R, P> List<R> findAll(Specification<T> spec, Sort sort, Class<P> projectionClass, Projection<T, P> projection, ProjectionMapper<P, R> mapper);
+
 
     /**
      * Projecting and mapping version of {@link StreamingJpaSpecificationRepository#findAllStream(Specification)}.
@@ -85,7 +120,7 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @param mapper the tuple mapper to apply, must not be {@literal null}.
      * @return never {@literal null}.
      */
-    <R> Stream<R> findAllStream(@Nullable Specification<T> spec, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> Stream<R> findAllStream(@Nullable Specification<T> spec, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
 
     /**
      * Projecting and mapping version of {@link StreamingJpaSpecificationRepository#findAllStream(Specification, Sort)}.
@@ -98,7 +133,7 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @param mapper the tuple mapper to apply, must not be {@literal null}.
      * @return never {@literal null}.
      */
-    <R> Stream<R> findAllStream(@Nullable Specification<T> spec, Sort sort, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> Stream<R> findAllStream(@Nullable Specification<T> spec, Sort sort, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
 
     /**
      * Projecting and mapping version of {@link StreamingJpaSpecificationRepository#findAllStream(Specification, Sort, Map)}.
@@ -112,7 +147,24 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @param mapper the tuple mapper to apply, must not be {@literal null}.
      * @return never {@literal null}.
      */
-    <R> Stream<R> findAllStream(@Nullable Specification<T> spec, Sort sort, Map<String, Object> queryHints, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> Stream<R> findAllStream(@Nullable Specification<T> spec, Sort sort, Map<String, Object> queryHints, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
+
+    /**
+     * Generic projecting and mapping version of {@link StreamingJpaSpecificationRepository#findAllStream(Specification, Sort, Map)}.
+     * Returns all mapped results matching the given {@link Specification} and {@link Sort}.
+     *
+     * @param <R> type of mapped result
+     * @param <P> target type of projection, e.g. {@link Tuple}, {@link Object[]}, ...
+     * @param spec can be {@literal null}.
+     * @param sort must not be {@literal null}.
+     * @param queryHints must not be {@literal null}.
+     * @param projectionClass class of target projection type
+     * @param projection the projection to apply, must not be {@literal null}.
+     * @param mapper the tuple mapper to apply, must not be {@literal null}.
+     * @return never {@literal null}.
+     */
+    <R, P> Stream<R> findAllStream(Specification<T> spec, Sort sort, Map<String, Object> queryHints, Class<P> projectionClass, Projection<T, P> projection, ProjectionMapper<P, R> mapper);
+
 
     /**
      * Projecting and mapping version of {@link JpaSpecificationExecutor#findAll(Specification, Pageable)}.
@@ -125,6 +177,21 @@ public interface MappingJpaSpecificationRepository<T, ID> extends Repository<T, 
      * @param mapper the tuple mapper to apply, must not be {@literal null}.
      * @return never {@literal null}.
      */
-    <R> Page<R> findAll(@Nullable Specification<T> spec, Pageable pageable, Projection<T> projection, ProjectionMapper<R> mapper);
+    <R> Page<R> findAll(@Nullable Specification<T> spec, Pageable pageable, Projection<T,Tuple> projection, ProjectionMapper<Tuple,R> mapper);
+
+    /**
+     * Generic projecting and mapping version of {@link JpaSpecificationExecutor#findAll(Specification, Pageable)}.
+     * Returns a {@link Page} of mapped results matching the given {@link Specification}.
+     *
+     * @param <R> type of mapped result
+     * @param <P> target type of projection, e.g. {@link Tuple}, {@link Object[]}, ...
+     * @param spec can be {@literal null}.
+     * @param pageable must not be {@literal null}.
+     * @param projectionClass class of target projection type
+     * @param projection the projection to apply, must not be {@literal null}.
+     * @param mapper the tuple mapper to apply, must not be {@literal null}.
+     * @return never {@literal null}.
+     */
+    <R, P> Page<R> findAll(Specification<T> spec, Pageable pageable, Class<P> projectionClass, Projection<T, P> projection, ProjectionMapper<P, R> mapper);
 
 }

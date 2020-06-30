@@ -21,7 +21,7 @@ import de.mw.spring.data.jpa.repository.Projection;
  * 
  * Using the metamodel the mapping should be safe at runtime.
  */
-public class ProjectionByMetamodelAttributes<T> implements Projection<T> {
+public class ProjectionByMetamodelAttributes<T> implements Projection<T,Tuple> {
 
     private Attribute<T,?>[] attributes;
     

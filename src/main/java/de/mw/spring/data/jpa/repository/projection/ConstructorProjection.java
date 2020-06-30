@@ -3,6 +3,8 @@ package de.mw.spring.data.jpa.repository.projection;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
+import javax.persistence.Tuple;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,12 +26,12 @@ import lombok.experimental.Delegate;
  * @param <T> type of entity
  * @param <R> type of tuple result mapping
  */
-public class ConstructorProjection<T, R> implements Projection<T>, ProjectionMapper<R> {
+public class ConstructorProjection<T, R> implements Projection<T,Tuple>, ProjectionMapper<Tuple,R> {
 
     @Delegate
-    private Projection<T> projection;
+    private Projection<T,Tuple> projection;
     @Delegate
-    private ProjectionMapper<R> projectionMapper;
+    private ProjectionMapper<Tuple,R> projectionMapper;
     
     /**
      * @param clazz class to project to
