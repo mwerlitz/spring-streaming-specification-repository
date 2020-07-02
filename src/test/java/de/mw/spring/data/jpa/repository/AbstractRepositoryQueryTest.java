@@ -44,15 +44,15 @@ import java.util.stream.Stream;
         "spring.jpa.hibernate.ddl-auto=none",
         "spring.jpa.properties.hibernate.dialect=de.mw.spring.data.jpa.repository.AbstractRepositoryQueryTest$TestingOrcale12cDialect"
 })
-public abstract class AbstractRepositoryQueryTest {
+public abstract class AbstractRepositoryQueryTest<T> {
 
     @Autowired
     protected EntityManager entityManager;
     protected EntityManager entityManagerSpy;
     
-    protected List<AbstractQuery<?>> criteriaQuerys; // list of created criteria queries
-    protected List<TypedQuery<?>>    querys;         // list of created queries
-    protected List<TypedQuery<?>>    queryMocks;     // list of mock response for created queries
+    protected List<AbstractQuery<T>> criteriaQuerys; // list of created criteria queries
+    protected List<TypedQuery<T>>    querys;         // list of created queries
+    protected List<TypedQuery<T>>    queryMocks;     // list of mock response for created queries
 
 
     @SuppressWarnings("unchecked")
@@ -78,9 +78,10 @@ public abstract class AbstractRepositoryQueryTest {
      * @param mockConfigurer function to configure a new mock query
      * @return mock query
      */
-    protected Answer<TypedQuery<?>> answerCreateQuery(Function<TypedQuery<?>, TypedQuery<?>> mockConfigurer) {
+    @SuppressWarnings("unchecked")
+    protected Answer<TypedQuery<T>> answerCreateQuery(Function<TypedQuery<T>, TypedQuery<T>> mockConfigurer) {
         return (invocation) -> {
-            TypedQuery<?> q = (TypedQuery<?>) invocation.getMethod().invoke(entityManager, invocation.getArguments());
+            TypedQuery<T> q = (TypedQuery<T>) invocation.getMethod().invoke(entityManager, invocation.getArguments());
             
             criteriaQuerys.add(invocation.getArgument(0));
             querys.add(q);
@@ -88,7 +89,7 @@ public abstract class AbstractRepositoryQueryTest {
             if (queryMocks.size() >= querys.size()) {
                 return queryMocks.get(querys.size() - 1); // return prepared mock query
             } else {
-                TypedQuery<?> mock = mock(TypedQuery.class); // create and return a new mock for query
+                TypedQuery<T> mock = mock(TypedQuery.class); // create and return a new mock for query
                 queryMocks.add(mock);
                 return mockConfigurer.apply(mock);
             }
@@ -98,7 +99,7 @@ public abstract class AbstractRepositoryQueryTest {
     /**
      * Configures a mock for usage with {@link EntityManager#createQuery(CriteriaQuery)}
      */
-    protected TypedQuery<?> configureMock_createQuery_CriteriaQuery(TypedQuery<?> mock) {
+    protected TypedQuery<T> configureMock_createQuery_CriteriaQuery(TypedQuery<T> mock) {
         doReturn(Stream.of()).when(mock).getResultStream();
         doReturn(List.of()).when(mock).getResultList();
         return mock;
@@ -107,7 +108,7 @@ public abstract class AbstractRepositoryQueryTest {
     /**
      * Configures a mock for usage with {@link EntityManager#createQuery(CriteriaUpdate)}
      */
-    protected TypedQuery<?> configureMock_createQuery_CriteriaUpdate(TypedQuery<?> mock) {
+    protected TypedQuery<T> configureMock_createQuery_CriteriaUpdate(TypedQuery<T> mock) {
         doReturn(1).when(mock).executeUpdate();
         return mock;
     }
@@ -115,22 +116,17 @@ public abstract class AbstractRepositoryQueryTest {
     /**
      * Configures a mock for usage with {@link EntityManager#createQuery(CriteriaDelete)}
      */
-    protected TypedQuery<?> configureMock_createQuery_CriteriaDelete(TypedQuery<?> mock) {
+    protected TypedQuery<T> configureMock_createQuery_CriteriaDelete(TypedQuery<T> mock) {
         doReturn(1).when(mock).executeUpdate();
         return mock;
     }
     
     /**
      * Creates a spring data jpa repository
-     * @param <R>
-     * @param <T>
-     * @param repositoryClass
-     * @param entityClass
-     * @return
      */
-    protected <R extends Repository<T, ?>, T> R createJpaRepositoryWithSpyEntityManager(Class<R> repositoryClass, Class<T> entityClass) {
+    protected <R extends Repository<E, ?>, E> R createJpaRepositoryWithSpyEntityManager(Class<R> repositoryInterface, Class<E> entityClass) {
         // IMPORTANT: the repository impl class should match the one configured at @EnableJpaRepositories
-        return mock(repositoryClass, AdditionalAnswers.delegatesTo(new MappingJpaSpecificationRepositoryImpl<>(entityClass, entityManagerSpy)));
+        return mock(repositoryInterface, AdditionalAnswers.delegatesTo(new MappingJpaSpecificationRepositoryImpl<>(entityClass, entityManagerSpy)));
     }
     
     /**
@@ -151,27 +147,27 @@ public abstract class AbstractRepositoryQueryTest {
         return queryString;
     }
     
-    protected TypedQuery<?> getQueryMock() {
+    protected TypedQuery<T> getQueryMock() {
         return queryMocks.get(0);
     }
     
-    protected TypedQuery<?> getQueryMock(int i) {
+    protected TypedQuery<T> getQueryMock(int i) {
         return queryMocks.get(i);
     }
     
-    protected TypedQuery<?> getQuery() {
+    protected TypedQuery<T> getQuery() {
         return querys.get(0);
     }
     
-    protected TypedQuery<?> getQuery(int i) {
+    protected TypedQuery<T> getQuery(int i) {
         return querys.get(i);
     }
     
-    protected AbstractQuery<?> getCiteriaQuery() {
+    protected AbstractQuery<T> getCiteriaQuery() {
         return criteriaQuerys.get(0);
     }
     
-    protected AbstractQuery<?> getCiteriaQuery(int i) {
+    protected AbstractQuery<T> getCiteriaQuery(int i) {
         return criteriaQuerys.get(i);
     }
     
@@ -183,7 +179,7 @@ public abstract class AbstractRepositoryQueryTest {
         return getQueryString(getQuery(i), alias);
     }
     
-    protected void addQueryMock(TypedQuery<?> q) {
+    protected void addQueryMock(TypedQuery<T> q) {
         queryMocks.add(q);
     }
      

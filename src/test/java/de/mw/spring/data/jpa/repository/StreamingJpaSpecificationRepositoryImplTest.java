@@ -16,7 +16,9 @@ import javax.persistence.TypedQuery;
 import java.util.Map;
 import java.util.stream.Stream;
 
-class StreamingJpaSpecificationRepositoryImplTest extends AbstractRepositoryQueryTest {
+import de.mw.spring.data.jpa.repository.StreamingJpaSpecificationRepositoryImplTest.TestEntity;
+
+class StreamingJpaSpecificationRepositoryImplTest extends AbstractRepositoryQueryTest<TestEntity> {
     
     @Mock
     private TypedQuery<TestEntity> query;
@@ -31,7 +33,7 @@ class StreamingJpaSpecificationRepositoryImplTest extends AbstractRepositoryQuer
     private StreamingJpaSpecificationRepositoryImpl<TestEntity,Long> testee;
     
     @Entity
-    private static class TestEntity {
+    static class TestEntity {
         
         @Id
         Long id;
@@ -39,7 +41,7 @@ class StreamingJpaSpecificationRepositoryImplTest extends AbstractRepositoryQuer
     }
     
     @Override
-    protected TypedQuery<?> configureMock_createQuery_CriteriaQuery(TypedQuery<?> mock) {
+    protected TypedQuery<TestEntity> configureMock_createQuery_CriteriaQuery(TypedQuery<TestEntity> mock) {
         return query;
     }
     
